@@ -1,0 +1,866 @@
+---
+openapi: 3.0.3
+info:
+  title: Simon OpenAPI
+  description: |
+    Site Monitoring provides efficient monitoring of clinical studies with integrated workflows to increase site
+    satisfaction, aid proactive decision making, and reduce risk and costs to ultimately increase study performance,
+    patient safety, and time to market.
+    ## API Conventions
+      - POST
+          To create a new resource from scratch. Invoking API with same payload will result in new record
+          creation will be attempted.
+          To create search requests that contain multiple elements and do not
+          adhere to GET Limitations.
+      - PUT
+          To make changes to an object that replaces a full resource or its sub-resources.
+      - PATCH
+          To make partial updates to an existing resource. Follows JSONPATH protocol. Read more here:
+          https://jsonpatch.com/
+      - GET
+          To retrieve a resource.
+    ## Exception Conventions
+      Follows Constraint Violation Message structure. Read more here: https://opensource.zalando.com/problem/constraint-violation/
+    ## Security
+      All requests to the Visits Service API must be signed by [mAuth](https://learn.mdsol.com/display/MCCSERVICESprd/Authorization).
+  contact:
+    name: Help Desk
+    email: helpdesk@mdsol.com
+  version: 2023.1.0
+externalDocs:
+  description: |
+    Site Monitoring provides efficient monitoring of clinical studies with integrated workflows to increase site
+    satisfaction, aid proactive decision making, and reduce risk and costs to ultimately increase study performance,
+    patient safety, and time to market.
+  url: https://<OpenIPALocation>
+servers:
+- url: "https://{stage}.imedidata{region}.{tld}{basePath}"
+  variables:
+    stage:
+      default: sandbox
+    region:
+      default: ""
+    tld:
+      default: net
+    basePath:
+      default: /v1
+security:
+- impersonate: []
+- mccTime: []
+- mccAuth: []
+tags:
+- name: Settings - Monitoring Conduct Methods
+  description: ' The ''monitoring_conduct_methods'' APIs are used to configure different
+    methods of conduct for Site Monitoring visits.'
+  x-mdsol:
+    doc:
+      $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+    slo:
+      $ref: '#/x-mdsol/slos/StandardResource'
+- name: Settings - Placeholder Configuration
+  description: |
+    The 'Placeholder Configuration' API routes are used to configure different types of placeholders.
+  x-mdsol:
+    doc:
+      $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+    slo:
+      $ref: '#/x-mdsol/slos/StandardResource'
+- name: 'Visits - Visits Methods '
+  description: ' The ''visits_methods'' APIs are used for creation and retrieval of
+    visits.'
+  x-mdsol:
+    doc:
+      $ref: '#/components/schemas/VisitModel'
+    slo:
+      $ref: '#/x-mdsol/slos/StandardResource'
+paths:
+  /api/v1/config/conductmethods:
+    get:
+      tags:
+      - Settings - Monitoring Conduct Methods
+      summary: Get Conduct methods
+      description: |
+        Retrieve Site Monitoring, Conduct Methods that are pre-configured methods of conduct for a site.which determine
+        the sequence of activities that need to be performed during a site monitoring visit. These Conduct Methods
+        are a part of the wider Site Monitoring framework, which is designed to help manage all types of site contact
+        data related to monitoring, including central, remote, and on-site support.
+      operationId: ConductMethods.getConductMethods
+      parameters:
+      - name: level
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConductMethod'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+    post:
+      tags:
+      - Settings - Monitoring Conduct Methods
+      summary: Create Conduct methods
+      description: Create Conduct Methods.
+      operationId: ConductMethods.postConductMethods
+      parameters:
+      - name: level
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConductMethod'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/config/placeholders:
+    get:
+      tags:
+      - Settings - Placeholder Configuration
+      summary: Get All Blueprints from DB
+      description: |
+        Get All Blueprints from DB.
+      operationId: PlaceholderConfiguration.getBlueprints
+      parameters:
+      - name: type
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/ComponentType'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IBlueprintModel'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/config/placeholders/bullet:
+    post:
+      tags:
+      - Settings - Placeholder Configuration
+      summary: Create New Bullet blueprint
+      description: Create new bullet type blueprint.
+      operationId: PlaceholderConfiguration.createBulletBlueprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulletBlueprint'
+      responses:
+        "200":
+          $ref: '#/components/responses/post-200-resource-id'
+        "422":
+          $ref: '#/components/responses/post-422'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/config/placeholders/inline:
+    post:
+      tags:
+      - Settings - Placeholder Configuration
+      summary: Create New inline blueprint
+      description: Create new inline type blueprint.
+      operationId: PlaceholderConfiguration.createInlineBlueprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InlineTextBlueprint'
+      responses:
+        "200":
+          $ref: '#/components/responses/post-200-resource-id'
+        "422":
+          $ref: '#/components/responses/post-422'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/config/placeholders/multiline:
+    post:
+      tags:
+      - Settings - Placeholder Configuration
+      summary: Create New MultiLine blueprint
+      description: Create new multiline type blueprint.
+      operationId: PlaceholderConfiguration.createMultiLineBlueprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiLineBlueprint'
+      responses:
+        "200":
+          $ref: '#/components/responses/post-200-resource-id'
+        "422":
+          $ref: '#/components/responses/post-422'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/config/placeholders/multitable:
+    post:
+      tags:
+      - Settings - Placeholder Configuration
+      summary: Create New Multi table blueprint
+      description: Create new multi table type blueprint.
+      operationId: PlaceholderConfiguration.createMultiTableBlueprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiTableBlueprint'
+      responses:
+        "200":
+          $ref: '#/components/responses/post-200-resource-id'
+        "422":
+          $ref: '#/components/responses/post-422'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/config/placeholders/table:
+    post:
+      tags:
+      - Settings - Placeholder Configuration
+      summary: Create New table blueprint
+      description: Create new table type blueprint.
+      operationId: PlaceholderConfiguration.createTableBlueprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableBlueprint'
+      responses:
+        "200":
+          $ref: '#/components/responses/post-200-resource-id'
+        "422":
+          $ref: '#/components/responses/post-422'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/config/placeholders/{id}:
+    get:
+      tags:
+      - Settings - Placeholder Configuration
+      summary: Get Blueprints with id from DB
+      description: |
+        Get Blueprints with id from DB.
+      operationId: PlaceholderConfiguration.getBlueprint
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          $ref: '#/components/responses/get-post-404'
+      x-mdsol:
+        doc:
+          $ref: '#/x-mdsol/docs/PlaceholderConfiguration'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+  /api/v1/visits:
+    get:
+      tags:
+      - 'Visits - Visits Methods '
+      summary: Get List of Visits
+      description: |
+        Retrieving List of Visits at Study Environment level with country name and site name filters.
+      operationId: Visits.getVisitsList
+      parameters:
+      - name: country_name
+        in: query
+        schema:
+          type: string
+      - name: page_no
+        in: query
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - name: records_per_page
+        in: query
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - name: site_name
+        in: query
+        schema:
+          type: string
+      - name: study_environment_uuid
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      - name: MCC-Impersonate
+        in: header
+        schema:
+          type: string
+      responses:
+        "200":
+          $ref: '#/components/responses/post-200-resource-id'
+        "404":
+          $ref: '#/components/responses/get-post-404'
+      x-mdsol:
+        doc:
+          $ref: '#/components/schemas/VisitModel'
+        slo:
+          $ref: '#/x-mdsol/slos/StandardResource'
+components:
+  schemas:
+    AttributeDataType:
+      enum:
+      - STRING
+      - DOUBLE
+      - LONG
+      - INT32
+      - DATE
+      type: string
+    BulletBlueprint:
+      required:
+      - key
+      type: object
+      properties:
+        blueprint_id:
+          type: string
+        key:
+          type: string
+        type:
+          $ref: '#/components/schemas/ComponentType'
+        style:
+          $ref: '#/components/schemas/StyleModel'
+        group:
+          type: string
+        context:
+          $ref: '#/components/schemas/CtmsContext'
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        text:
+          type: array
+          items:
+            type: string
+        document_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+        ctms_default:
+          type: boolean
+    BusinessDataSourceRegistry:
+      enum:
+      - AGGREGATOR
+      - ARCHON
+      - DALTON
+      - DOCTRACKING
+      - ICF
+      - MEDS
+      - PAYMENTS
+      - PLINTH
+      - SLOGINATOR
+      - WESTTOWER
+      type: string
+    ColumnDataFormat:
+      enum:
+      - SENTENCE_CASE
+      - DEFAULT_NUMBER
+      type: string
+    ColumnDisplay:
+      type: object
+      properties:
+        order:
+          format: int32
+          type: integer
+        key:
+          type: string
+        visible:
+          type: boolean
+        disabled:
+          type: boolean
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        data_field_id:
+          type: string
+        display_format:
+          $ref: '#/components/schemas/ColumnDataFormat'
+        data_type:
+          $ref: '#/components/schemas/AttributeDataType'
+    ColumnOptionOperation:
+      type: object
+      properties:
+        trigger:
+          type: string
+        action:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnPropertyOperationParam'
+    ColumnPropertiesFilter:
+      type: object
+      properties:
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnPropertiesFilterOption'
+        type:
+          $ref: '#/components/schemas/PropertiesFilterType'
+        options_api:
+          type: string
+    ColumnPropertiesFilterOption:
+      type: object
+      properties:
+        key:
+          type: string
+        selected:
+          type: boolean
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnOptionOperation'
+    ColumnPropertyOperationParam:
+      type: object
+      properties:
+        property_key:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    ComponentType:
+      enum:
+      - TABLE
+      - MULTITABLE
+      - IMAGE
+      - FORM
+      - TEXT
+      - INLINE
+      - MULTILINE
+      - BULLET
+      type: string
+    ConductMethod:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        ctms_default:
+          type: boolean
+        context:
+          $ref: '#/components/schemas/CtmsContext'
+        translations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CtmsTranslation'
+    CtmsContext:
+      type: object
+      properties:
+        cd:
+          type: string
+        cg:
+          type: string
+        se:
+          type: string
+        visit:
+          type: string
+    CtmsTranslation:
+      type: object
+      properties:
+        lang_code:
+          type: string
+        translated_value:
+          type: string
+    DocumentType:
+      enum:
+      - LETTER
+      - REPORT
+      - ADDENDUM
+      type: string
+    IBlueprintModel:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ComponentType'
+        blueprint_id:
+          type: string
+    InlineTextBlueprint:
+      required:
+      - key
+      type: object
+      properties:
+        blueprint_id:
+          type: string
+        text:
+          type: string
+        key:
+          type: string
+        group:
+          type: string
+        type:
+          $ref: '#/components/schemas/ComponentType'
+        data_source_ref:
+          $ref: '#/components/schemas/BusinessDataSourceRegistry'
+        context:
+          $ref: '#/components/schemas/CtmsContext'
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        document_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+        data_source_apis:
+          type: array
+          items:
+            type: string
+        ctms_default:
+          type: boolean
+    MultiLineBlueprint:
+      required:
+      - key
+      type: object
+      properties:
+        blueprint_id:
+          type: string
+        key:
+          type: string
+        group:
+          type: string
+        type:
+          $ref: '#/components/schemas/ComponentType'
+        text:
+          type: string
+        style:
+          $ref: '#/components/schemas/StyleModel'
+        data_source_ref:
+          $ref: '#/components/schemas/BusinessDataSourceRegistry'
+        context:
+          $ref: '#/components/schemas/CtmsContext'
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        document_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+        data_source_apis:
+          type: array
+          items:
+            type: string
+        ctms_default:
+          type: boolean
+    MultiTableBlueprint:
+      required:
+      - key
+      type: object
+      properties:
+        blueprint_id:
+          type: string
+        key:
+          type: string
+        group:
+          type: string
+        type:
+          $ref: '#/components/schemas/ComponentType'
+        data_source_ref:
+          $ref: '#/components/schemas/BusinessDataSourceRegistry'
+        context:
+          $ref: '#/components/schemas/CtmsContext'
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultiTableEntry'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableColumnBlueprint'
+        document_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+        data_source_apis:
+          type: array
+          items:
+            type: string
+        ctms_default:
+          type: boolean
+    MultiTableEntry:
+      required:
+      - key
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        visible:
+          type: boolean
+        order:
+          format: int32
+          type: integer
+        type:
+          $ref: '#/components/schemas/ComponentType'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableColumnBlueprint'
+    PropertiesFilterType:
+      enum:
+      - RADIOFORM
+      - CHECKBOX
+      type: string
+    StyleModel:
+      type: object
+      properties:
+        background_color:
+          type: string
+        font_weight:
+          type: string
+        text_decoration:
+          type: string
+        position:
+          type: string
+    TableBlueprint:
+      required:
+      - key
+      - columns
+      type: object
+      properties:
+        blueprint_id:
+          type: string
+        key:
+          type: string
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        group:
+          type: string
+        type:
+          $ref: '#/components/schemas/ComponentType'
+        data_source_ref:
+          $ref: '#/components/schemas/BusinessDataSourceRegistry'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableColumnBlueprint'
+        data_source_apis:
+          type: array
+          items:
+            type: string
+        document_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+        context:
+          $ref: '#/components/schemas/CtmsContext'
+        ctms_default:
+          type: boolean
+    TableColumnBlueprint:
+      type: object
+      properties:
+        key:
+          type: string
+        display:
+          $ref: '#/components/schemas/ColumnDisplay'
+        properties_filter:
+          $ref: '#/components/schemas/ColumnPropertiesFilter'
+    UUID:
+      format: uuid
+      pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      type: string
+    VisitModel:
+      type: object
+      properties:
+        study_environment_uuid:
+          $ref: '#/components/schemas/UUID'
+        uuid:
+          $ref: '#/components/schemas/UUID'
+        visit_id:
+          type: string
+        unblinded:
+          type: boolean
+        visit_date:
+          type: string
+        conduct:
+          type: string
+        visit_type:
+          type: string
+        visit_status:
+          type: string
+        report_status:
+          type: string
+        assignee:
+          type: string
+        site_name:
+          type: string
+        country_name:
+          type: string
+  responses:
+    get-post-404:
+      description: Resource not found
+    post-200-resource-id:
+      description: Record Successfully Created
+      content:
+        application/json:
+          schema:
+            type: string
+    post-422:
+      description: Unprocessable Content
+  securitySchemes:
+    mccTime:
+      type: apiKey
+      name: mcc-time
+      in: header
+      x-mdsol:
+        useApiGateway: true
+        slos:
+          SlowResource:
+            "99thPercentile": 5000ms
+            requestsPerSecond: 100
+          StandardResource:
+            "99thPercentile": 2500ms
+            requestsPerSecond: 100
+        docs:
+          MasterData:
+            page: Site Monitoring/Master Data
+            overview: A pre-configured set of master data values provided to each
+              core Site Monitoring resource type.
+            description: Each core resource type is provided with a preconfigured
+              set of master data values.
+          ConductMethods:
+            page: Site Monitoring/Monitoring Conduct Methods
+            overview: Pre-configured methods of conduct for a Site Monitoring visit.
+            description: Monitoring conduct methods are a pre-configured set of methods
+              of conduct for a site.
+    impersonate:
+      type: apiKey
+      name: MCC-Impersonate
+      in: header
+      x-mdsol:
+        useApiGateway: true
+        slos:
+          SlowResource:
+            "99thPercentile": 5000ms
+            requestsPerSecond: 100
+          StandardResource:
+            "99thPercentile": 2500ms
+            requestsPerSecond: 100
+        docs:
+          MasterData:
+            page: Site Monitoring/Master Data
+            overview: A pre-configured set of master data values provided to each
+              core Site Monitoring resource type.
+            description: Each core resource type is provided with a preconfigured
+              set of master data values.
+          ConductMethods:
+            page: Site Monitoring/Monitoring Conduct Methods
+            overview: Pre-configured methods of conduct for a Site Monitoring visit.
+            description: Monitoring conduct methods are a pre-configured set of methods
+              of conduct for a site.
+    mccAuth:
+      type: apiKey
+      name: mcc-authentication
+      in: header
+      x-mdsol:
+        useApiGateway: true
+        slos:
+          SlowResource:
+            "99thPercentile": 5000ms
+            requestsPerSecond: 100
+          StandardResource:
+            "99thPercentile": 2500ms
+            requestsPerSecond: 100
+        docs:
+          MasterData:
+            page: Site Monitoring/Master Data
+            overview: A pre-configured set of master data values provided to each
+              core Site Monitoring resource type.
+            description: Each core resource type is provided with a preconfigured
+              set of master data values.
+          ConductMethods:
+            page: Site Monitoring/Monitoring Conduct Methods
+            overview: Pre-configured methods of conduct for a Site Monitoring visit.
+            description: Monitoring conduct methods are a pre-configured set of methods
+              of conduct for a site.
+    SecurityScheme:
+      type: http
+      description: Authentication
+      scheme: basic
+x-mdsol:
+  useApiGateway: true
+  slos:
+    SlowResource:
+      "99thPercentile": 5000ms
+      requestsPerSecond: 100
+    StandardResource:
+      "99thPercentile": 2500ms
+      requestsPerSecond: 100
+  docs:
+    MasterData:
+      page: Site Monitoring/Master Data
+      overview: A pre-configured set of master data values provided to each core Site
+        Monitoring resource type.
+      description: Each core resource type is provided with a preconfigured set of
+        master data values.
+    ConductMethods:
+      page: Site Monitoring/Monitoring Conduct Methods
+      overview: Pre-configured methods of conduct for a Site Monitoring visit.
+      description: Monitoring conduct methods are a pre-configured set of methods
+        of conduct for a site.

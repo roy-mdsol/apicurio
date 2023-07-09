@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apicurio-studio-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apicurio-studio-db
+  template:
+    metadata:
+      labels:
+        app: apicurio-studio-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15.2
+          env:
+            - name: POSTGRES_DB
+              value: ${AS_DATABASE}
+            - name: POSTGRES_USER
+              value: ${AS_DB_USER}
+            - name: POSTGRES_PASSWORD
+              value: ${AS_DB_PASSWORD}
+          volumeMounts:
+            - name: postgre-apicurio
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgre-apicurio
+          emptyDir: {}
